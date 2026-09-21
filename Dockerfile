@@ -1,6 +1,6 @@
-# Dockerfile - Môi trường build wizk-repack cho Ubuntu & Termux dựa trên WizkBuilder
-# Tận dụng container image có sẵn từ GitHub Packages: ghcr.io/wizk-modz/builder
-ARG BASE_IMAGE=ghcr.io/wizk-modz/builder:cpp-py
+# Dockerfile - Môi trường build wizk-repack cho Ubuntu & Termux
+# Hỗ trợ multi-arch (amd64 và arm64). Mặc định dùng ubuntu:24.04 (có sẵn multi-arch)
+ARG BASE_IMAGE=ubuntu:24.04
 FROM ${BASE_IMAGE}
 
 USER root

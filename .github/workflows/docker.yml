@@ -36,7 +36,7 @@ jobs:
 
       - name: Build Debian package cho ARM64 (aarch64 / Termux)
         run: |
-          dpkg-buildpackage -aarm64 -us -uc -b
+          CC=aarch64-linux-gnu-gcc dpkg-buildpackage -aarm64 -us -uc -b -d
           cp ../*arm64.deb dist/
           ls -la dist/
 

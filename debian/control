@@ -2,7 +2,7 @@ Source: wizk-repack
 Section: admin
 Priority: optional
 Maintainer: Wizk <hdshhhyd@gmail.com>
-Build-Depends: debhelper-compat (= 13), gcc
+Build-Depends: debhelper-compat (= 13)
 Standards-Version: 4.6.2
 Rules-Requires-Root: no
 
