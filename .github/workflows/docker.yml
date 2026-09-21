@@ -11,7 +11,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  # Job 1: Build Debian Package (.deb)
+  # Job 1: Build Debian Packages (.deb) cho cả arm64 và amd64
   build-deb:
     runs-on: ubuntu-latest
     permissions:
@@ -20,22 +20,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install build dependencies
+      - name: Install build dependencies & ARM64 cross toolchain
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            build-essential debhelper debhelper-compat dpkg-dev fakeroot
+            build-essential debhelper debhelper-compat dpkg-dev fakeroot \
+            crossbuild-essential-arm64
 
-      - name: Build Debian package
+      - name: Build Debian package cho AMD64 (x86_64)
         run: |
           dpkg-buildpackage -us -uc -b
           mkdir -p dist
           cp ../*.deb dist/
+          dh clean
 
-      - name: Upload .deb package artifact
+      - name: Build Debian package cho ARM64 (aarch64 / Termux)
+        run: |
+          dpkg-buildpackage -aarm64 -us -uc -b
+          cp ../*arm64.deb dist/
+          ls -la dist/
+
+      - name: Upload .deb packages artifact
         uses: actions/upload-artifact@v4
         with:
-          name: deb-package
+          name: deb-packages
           path: dist/*.deb
 
       - name: Create GitHub Release
@@ -46,15 +54,17 @@ jobs:
           name: Wizk Repack v1.0.0
           body: |
             ## Wizk Repack v1.0.0 (C Native)
-            - Đóng gói Debian package chuẩn cho `wizk-repack`.
-            - Hỗ trợ namespace Termux (`/data/data/com.termux/files`) và Ubuntu (`/`).
-            - Hỗ trợ kiến trúc `aarch64` và `arm64`.
-            - Docker image được xuất bản tại GitHub Packages: `ghcr.io/${{ github.repository }}:latest`.
+            Đóng gói Debian package chuẩn cho `wizk-repack` hỗ trợ cả 2 kiến trúc:
+            - `wizk-repack_1.0.0_arm64.deb`: Dành cho thiết bị **ARM64 / AArch64 / Termux / Android**.
+            - `wizk-repack_1.0.0_amd64.deb`: Dành cho máy tính **x86_64 / PC / Server**.
+
+            ### Docker Container (GitHub Packages):
+            - `ghcr.io/${{ github.repository }}:latest` (Multi-arch: `linux/arm64`, `linux/amd64`)
           files: dist/*.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Job 2: Build & Push Docker image to GitHub Packages (GHCR)
+  # Job 2: Build & Push Docker image Multi-Arch (linux/amd64 & linux/arm64)
   docker-ghcr:
     runs-on: ubuntu-latest
     permissions:
@@ -63,6 +73,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up QEMU (cho multi-arch arm64 + amd64)
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -83,11 +96,12 @@ jobs:
             type=raw,value=latest
             type=raw,value=1.0.0
 
-      - name: Build and push Docker image to GHCR
+      - name: Build and push Multi-arch Docker image to GHCR
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
