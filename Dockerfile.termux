@@ -1,0 +1,25 @@
+# Dockerfile.termux - Môi trường đóng gói và kiểm thử trong container Termux
+ARG BASE_IMAGE=ghcr.io/termux/termux-docker:latest
+FROM ${BASE_IMAGE}
+
+LABEL maintainer="Wizk <hdshhhyd@gmail.com>"
+
+# Thiết lập môi trường Termux
+ENV PREFIX=/data/data/com.termux/files/usr
+ENV PATH=/data/data/com.termux/files/usr/bin:$PATH
+
+# Cập nhật và cài đặt công cụ cần thiết trên Termux
+RUN pkg update -y && pkg install -y \
+    clang \
+    make \
+    dpkg \
+    tar \
+    xz-utils
+
+WORKDIR /workspace
+COPY . /workspace
+
+# Biên dịch với prefix của Termux
+RUN make clean && make CC=clang PREFIX=/data/data/com.termux/files/usr
+
+CMD ["./repack", "--termux", "--help"]

@@ -1,0 +1,9 @@
+wizk-repack (1.0.0) unstable; urgency=medium
+
+  * Initial release: viết lại công cụ repack bằng C.
+  * Hỗ trợ cấu hình namespace Termux (/data/data/com.termux/files) và Ubuntu (/).
+  * Hỗ trợ tùy chọn và ánh xạ kiến trúc aarch64 và arm64.
+  * Hỗ trợ conffiles, diversions, maintainer scripts.
+  * Chuẩn hóa quyền theo Debian Policy.
+
+ -- Wizk <hdshhhyd@gmail.com>  Mon, 21 Sep 2026 00:00:00 +0000

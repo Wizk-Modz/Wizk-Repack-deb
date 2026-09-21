@@ -1,0 +1,16 @@
+Source: wizk-repack
+Section: admin
+Priority: optional
+Maintainer: Wizk <hdshhhyd@gmail.com>
+Build-Depends: debhelper-compat (= 13), gcc
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+
+Package: wizk-repack
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, dpkg (>= 1.17.0)
+Description: Công cụ đóng gói lại gói Debian từ hệ thống đã cài đặt
+ Wizk Repack là bản viết bằng C hiệu năng cao, thay thế cho dpkg-repack
+ (Perl). Hỗ trợ đầy đủ conffiles, diversions, maintainer scripts,
+ namespace Termux/Ubuntu, tùy chọn kiến trúc aarch64/arm64 và chuẩn hóa
+ quyền theo Debian Policy.
