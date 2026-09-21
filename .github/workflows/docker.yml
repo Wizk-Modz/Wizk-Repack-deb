@@ -29,12 +29,14 @@ jobs:
       - name: Build Debian package
         run: |
           dpkg-buildpackage -us -uc -b
+          mkdir -p dist
+          cp ../*.deb dist/
 
       - name: Upload .deb package artifact
         uses: actions/upload-artifact@v4
         with:
           name: deb-package
-          path: ../*.deb
+          path: dist/*.deb
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
@@ -48,7 +50,7 @@ jobs:
             - Hỗ trợ namespace Termux (`/data/data/com.termux/files`) và Ubuntu (`/`).
             - Hỗ trợ kiến trúc `aarch64` và `arm64`.
             - Docker image được xuất bản tại GitHub Packages: `ghcr.io/${{ github.repository }}:latest`.
-          files: ../*.deb
+          files: dist/*.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

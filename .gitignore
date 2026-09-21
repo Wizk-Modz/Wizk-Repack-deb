@@ -1,5 +1,6 @@
 # Build outputs
 repack
+dist/
 *.o
 *.a
 *.so
